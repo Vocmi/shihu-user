@@ -9,7 +9,7 @@ let useHomeStore = defineStore('Home', {
     //小仓库存储数据的地方
     state: () => {
         return {
-            postId: 1,
+            postId: null as string | null,
             initialLikeCount: 10,
             islike: 0
         };
@@ -94,9 +94,27 @@ let useHomeStore = defineStore('Home', {
                 this.islike = result.data.isLiked;
                 return result.data;
             }
+        },
+
+        //本地存储保证持久化
+        setPostId(id: string | null) {
+            if (id != null) {
+                this.postId = id
+                localStorage.setItem('postId', id) // 存储到 localStorage
+            }
+        },
+        async loadPostId() {
+            const storedId = localStorage.getItem('postId')
+            if (storedId) {
+                this.setPostId(storedId)
+            }
         }
     },
-    getters: {},
+    getters: {
+        getPostId(): any {
+            return this.postId;
+        }
+    },
 });
 
 //对外暴露小仓库

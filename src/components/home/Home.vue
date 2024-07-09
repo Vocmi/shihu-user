@@ -59,9 +59,9 @@ onMounted(() => {
   loadMore();
 });
 
-const details = (itemId: any) => {
-  //这里进行跳转路由
-  homeStore.postId = itemId;
+const details = (itemId: string) => {
+  //本地存储保证数据的持久化
+  homeStore.setPostId(itemId);
   $router.push("/details");
 }
 

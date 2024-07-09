@@ -17,6 +17,7 @@
     "axios": "^1.7.2",
     "dayjs": "^1.11.11",
     "element-plus": "^2.7.5",
+    "esbuild": "^0.23.0",
     "fast-glob": "^3.3.2",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",

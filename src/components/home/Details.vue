@@ -75,10 +75,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import useHomeStore from '@/store/modules/home/home';
 import useUserStore from '@/store/modules/user';
-import { PostIdParams, Like, submitComment, reports } from '@/api/home/type';
+import { submitComment, reports } from '@/api/home/type';
 import { ElNotification, ElMessage } from "element-plus";
 
 let homeStore = useHomeStore();
@@ -87,19 +87,6 @@ let userStore = useUserStore();
 //评论功能的实现
 const dialogTableVisible = ref(false)
 const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
-
-let param: any = {
-    params: {
-        id: homeStore.postId
-    }
-};
-
-let params: any = {
-    params: {
-        postId: homeStore.postId
-    }
-}
 
 // 评论信息
 const comments: any = ref([]);
@@ -107,6 +94,11 @@ const comments: any = ref([]);
 
 //用户点击时获取评论数据
 const showCommentsDialog = async () => {
+    let params: any = {
+        params: {
+            postId: homeStore.getPostId
+        }
+    }
     dialogTableVisible.value = true;
     try {
         const response: any = await homeStore.getComment(params);
@@ -122,9 +114,15 @@ const newComment = ref({ content: '' });
 
 // 添加评论的方法
 const addComment = async () => {
+    let params: any = {
+        params: {
+            postId: homeStore.getPostId
+        }
+    }
+
     const submitComment: submitComment = {
         userId: userStore.userId,
-        postId: homeStore.postId,
+        postId: homeStore.getPostId,
         content: newComment.value.content,
     }
 
@@ -150,7 +148,7 @@ const newReports = ref({ content: '' });
 const report = async () => {
     const report: reports = {
         reporterId: userStore.userId,
-        postId: homeStore.postId,
+        postId: homeStore.getPostId,
         reason: newReports.value.content,
     }
 
@@ -171,18 +169,18 @@ const items: any = ref([]);
 
 onMounted(async () => {
     // 页面加载时初始化加载数据
+    homeStore.loadPostId();
+    like.value.postId = homeStore.getPostId
     let params: any = {
         params: {
-            id: homeStore.postId
+            id: homeStore.getPostId
         }
     };
     try {
         const response: any = await homeStore.postDetails(params);
         items.value.push(response);
         likeCount.value = response.likeCount;
-        console.log(likeCount.value)
         like.value.isLike = response.isLiked;
-        console.log(like.value.isLike)
     } catch (error) {
         console.error('加载数据出错:', error);
     }
@@ -193,7 +191,7 @@ onMounted(async () => {
 let likeCount = ref(0);
 const like: any = ref({
     userId: userStore.userId,
-    postId: homeStore.postId,
+    postId: homeStore.getPostId,
     isLike: 0
 })
 
